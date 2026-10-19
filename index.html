@@ -464,6 +464,13 @@ h1,h2,h3,.serif{font-family:Georgia,'Times New Roman','宋体',serif;color:var(-
 .ccard.c-green{border-left-color:var(--green);}
 .ccard.c-blue{border-left-color:var(--blue);}
 .ccard.c-red{border-left-color:#C97B63;}
+.ccard.has-img{padding:10px;display:flex;align-items:center;gap:10px;}
+.ccard.has-img .card-top{display:flex;gap:10px;align-items:center;width:100%;}
+.ccard.has-img .card-img{width:56px;height:56px;min-width:56px;min-height:56px;border-radius:10px;object-fit:cover;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);display:block;}
+.ccard.has-img .card-info{flex:1;min-width:0;}
+.ccard.has-img h4{margin:0 0 2px;font-size:13px;}
+.ccard.has-img p{font-size:10px;margin:0;color:#9A8873;}
 
 /* Favorite star */
 .star{font-size:22px;cursor:pointer;}
@@ -1891,6 +1898,13 @@ function showSimDone(){
 
 
 /* ============ Card index ============ */
+const CARD_IMAGES = {
+  hero:{0:'hero_h1',1:'hero_h2',2:'hero_h3',3:'hero_h4',4:'hero_h5',5:'hero_h6',6:'hero_h7',7:'hero_h8',8:'hero_h9',9:'hero_h10',10:'hero_h11',11:'hero_h12'},
+  monster:{0:'monster_m1',1:'monster_m2',2:'monster_m3',3:'monster_m4',4:'monster_m5',5:'monster_m6',6:'monster_m7'},
+  skill:{0:'skill_s1',2:'skill_s3',4:'skill_s5',7:'skill_s8',8:'skill_s9',10:'skill_s11'},
+  item:{0:'item_t1',1:'item_t2',2:'item_t3',5:'item_t6',9:'item_t10',12:'item_t13'}
+};
+const CARD_IMG_BASE = 'https://songbingjia2026.github.io/qingxu-xiaoyongshi/assets/cards/';
 const CARD_META = {
   emotion:{label:'情绪牌', icon:'🎴', colorMap:{green:'c-green',blue:'c-blue',red:'c-red'}},
   hero:{label:'英雄牌', icon:'🦸'},
@@ -1911,22 +1925,30 @@ function renderCardTabs(){
 function renderCardList(){
   let all = [];
   Object.keys(CARDS).forEach(cat=>{
-    CARDS[cat].forEach(c=>all.push({cat, ...c}));
+    CARDS[cat].forEach((c,idx)=>all.push({cat, idx, ...c}));
   });
   document.getElementById('cardCount').textContent = `共 ${all.length} 张`;
   let list = cardTab==='all'?all:all.filter(x=>x.cat===cardTab);
   let box = document.getElementById('cardList');
-  box.innerHTML = list.map((c,i)=>{
+  box.innerHTML = list.map((c)=>{
     let cls = '';
     if(c.cat==='emotion'){
       cls = c.color==='green'?'c-green':c.color==='blue'?'c-blue':'c-red';
     }
-    let icon = c.icon || CARD_META[c.cat].icon;
     let desc = c.function||c.description||c.trait||c.triggers||c.usage||'';
     if(desc.length>30) desc = desc.slice(0,30)+'…';
-    return `<div class="ccard ${cls}" onclick="openCardDetail('${c.cat}', ${CARDS[c.cat].indexOf(c)})">
-      <div class="ci">${icon}</div>
-      <h4>${c.name}</h4><p>${desc}</p></div>`;
+    let imgKey = CARD_IMAGES[c.cat] && CARD_IMAGES[c.cat][c.idx];
+    if(imgKey){
+      cls += ' has-img';
+      return `<div class="ccard ${cls}" onclick="openCardDetail('${c.cat}', ${c.idx})">
+        <div class="card-top"><img class="card-img" src="${CARD_IMG_BASE}${imgKey}.jpg" alt="${c.name}">
+        <div class="card-info"><h4>${c.name}</h4><p>${desc}</p></div></div></div>`;
+    } else {
+      let icon = c.icon || CARD_META[c.cat].icon;
+      return `<div class="ccard ${cls}" onclick="openCardDetail('${c.cat}', ${c.idx})">
+        <div class="ci">${icon}</div>
+        <h4>${c.name}</h4><p>${desc}</p></div>`;
+    }
   }).join('');
 }
 renderCardTabs();
