@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>情绪小勇士·线下玩法指导</title>
 <style>
 :root{
@@ -1899,6 +1902,7 @@ function showSimDone(){
 
 /* ============ Card index ============ */
 const CARD_IMG_BASE2 = 'https://songbingjia2026.github.io/qingxu-xiaoyongshi/assets/cards2/';
+const CARD_IMG_VER = '?v=20241020b';
 // 情绪牌扑克牌映射（情绪名 -> 扑克牌文件名）
 // 趋近型: 黑桃A-K(13) + 方块A-4(4) + 大王 = 18
 // 回避型: 梅花A-K(13) + 方块5-9(5) = 18
@@ -1918,7 +1922,7 @@ function getRealCardImg(cat, name, idx){
   // 空白牌特殊处理
   if(name==='空白牌'){
     const blankMap={hero:'英雄牌空白',monster:'怪物牌空白',skill:'宠物牌空白',item:'道具卡空白',scene:'场景卡空白'};
-    if(blankMap[cat]) return CARD_IMG_BASE2+cat+'/'+blankMap[cat]+'.jpg';
+    if(blankMap[cat]) return CARD_IMG_BASE2+cat+'/'+blankMap[cat]+'.jpg'+CARD_IMG_VER;
     return null;
   }
   // 特殊名称处理
@@ -1927,11 +1931,11 @@ function getRealCardImg(cat, name, idx){
   if(fname==='商场/超市') fname='商场超市';
   // 游戏牌直接用name
   if(['hero','monster','skill','item','scene'].includes(cat)){
-    return CARD_IMG_BASE2+cat+'/'+fname+'.jpg';
+    return CARD_IMG_BASE2+cat+'/'+fname+'.jpg'+CARD_IMG_VER;
   }
   // 情绪牌用映射
   if(cat==='emotion' && EMOTION_CARD_MAP[name]){
-    return CARD_IMG_BASE2+'emotion/'+EMOTION_CARD_MAP[name]+'.jpg';
+    return CARD_IMG_BASE2+'emotion/'+EMOTION_CARD_MAP[name]+'.jpg'+CARD_IMG_VER;
   }
   return null;
 }
