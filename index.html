@@ -1898,13 +1898,38 @@ function showSimDone(){
 
 
 /* ============ Card index ============ */
-const CARD_IMAGES = {
-  hero:{0:'hero_h1',1:'hero_h2',2:'hero_h3',3:'hero_h4',4:'hero_h5',5:'hero_h6',6:'hero_h7',7:'hero_h8',8:'hero_h9',9:'hero_h10',10:'hero_h11',11:'hero_h12'},
-  monster:{0:'monster_m1',1:'monster_m2',2:'monster_m3',3:'monster_m4',4:'monster_m5',5:'monster_m6',6:'monster_m7'},
-  skill:{0:'skill_s1',2:'skill_s3',4:'skill_s5',7:'skill_s8',8:'skill_s9',10:'skill_s11'},
-  item:{0:'item_t1',1:'item_t2',2:'item_t3',5:'item_t6',9:'item_t10',12:'item_t13'}
+const CARD_IMG_BASE2 = 'https://songbingjia2026.github.io/qingxu-xiaoyongshi/assets/cards2/';
+// 情绪牌扑克牌映射（情绪名 -> 扑克牌文件名）
+const EMOTION_CARD_MAP = {
+  '爱':'大王','愤怒':'小王',
+  '着迷':'方块A','期待':'方块2','释然':'方块3','坚定':'方块4',
+  '开心':'黑桃A','平静':'黑桃2','兴奋':'黑桃3','好奇':'黑桃4','想念':'黑桃5','羡慕':'黑桃6','欣慰':'黑桃7','自豪':'黑桃8','信任':'黑桃9','勇敢':'黑桃10','友好':'黑桃J','感恩':'黑桃Q','安心':'黑桃K',
+  '伤心':'梅花A','害怕':'梅花2','讨厌':'梅花3','惊讶':'梅花4','害羞':'梅花5','无聊':'梅花6','担心':'梅花7','失望':'梅花8','不好意思':'梅花9','孤独':'梅花10','尴尬':'梅花J','内疚':'梅花Q','迷茫':'梅花K',
+  '犹豫':'红桃A','遗憾':'红桃2','紧张':'红桃3','抱歉':'红桃4','退缩':'红桃5',
+  '生气':'方块5','委屈':'方块6','挫败':'方块7','嫉妒':'方块8','敌意':'方块9','报复':'方块10','仇视':'方块J','争执':'方块Q','挑衅':'方块K',
+  '质疑':'梅花A2','不满':'梅花2B','侵犯':'梅花3B','阻碍':'梅花4B','争斗':'梅花5B','争辩':'梅花6B','争胜':'梅花7B','对抗':'梅花8B'
 };
-const CARD_IMG_BASE = 'https://songbingjia2026.github.io/qingxu-xiaoyongshi/assets/cards/';
+function getRealCardImg(cat, name, idx){
+  // 空白牌特殊处理
+  if(name==='空白牌'){
+    const blankMap={hero:'英雄牌空白',monster:'怪物牌空白',skill:'宠物牌空白',item:'道具卡空白',scene:'场景卡空白'};
+    if(blankMap[cat]) return CARD_IMG_BASE2+cat+'/'+blankMap[cat]+'.jpg';
+    return null;
+  }
+  // 特殊名称处理
+  let fname=name;
+  if(fname==='手机/平板') fname='手机平板';
+  if(fname==='商场/超市') fname='商场超市';
+  // 游戏牌直接用name
+  if(['hero','monster','skill','item','scene'].includes(cat)){
+    return CARD_IMG_BASE2+cat+'/'+fname+'.jpg';
+  }
+  // 情绪牌用映射
+  if(cat==='emotion' && EMOTION_CARD_MAP[name]){
+    return CARD_IMG_BASE2+'emotion/'+EMOTION_CARD_MAP[name]+'.jpg';
+  }
+  return null;
+}
 const CARD_META = {
   emotion:{label:'情绪牌', icon:'🎴', colorMap:{green:'c-green',blue:'c-blue',red:'c-red'}},
   hero:{label:'英雄牌', icon:'🦸'},
@@ -1937,11 +1962,11 @@ function renderCardList(){
     }
     let desc = c.function||c.description||c.trait||c.triggers||c.usage||'';
     if(desc.length>30) desc = desc.slice(0,30)+'…';
-    let imgKey = CARD_IMAGES[c.cat] && CARD_IMAGES[c.cat][c.idx];
-    if(imgKey){
+    let imgUrl = getRealCardImg(c.cat, c.name, c.idx);
+    if(imgUrl){
       cls += ' has-img';
       return `<div class="ccard ${cls}" onclick="openCardDetail('${c.cat}', ${c.idx})">
-        <div class="card-top"><img class="card-img" src="${CARD_IMG_BASE}${imgKey}.jpg" alt="${c.name}">
+        <div class="card-top"><img class="card-img" src="${imgUrl}" alt="${c.name}">
         <div class="card-info"><h4>${c.name}</h4><p>${desc}</p></div></div></div>`;
     } else {
       let icon = c.icon || CARD_META[c.cat].icon;
